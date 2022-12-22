@@ -6,6 +6,10 @@ const FormSchema = new Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: "User",
         required: true
+    },
+    formId: {
+        type: String,
+        required: true
     }
 }, { timestamps: true });
 
