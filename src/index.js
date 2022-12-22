@@ -10,6 +10,12 @@ const userRouter = require("./routes/userRoutes");
 const formRouter = require("./routes/formRoutes");
 
 app.use(express.json());
+
+app.use((req, res, next) => {
+    console.log("http method - " + req.method + " URL - " + req.url);
+    next();
+})
+
 app.use("/users", userRouter);
 app.use("/forms", formRouter);
 
