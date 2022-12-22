@@ -4,12 +4,12 @@ const port = 3000;
 
 // mongo
 require('../config/db');
-app.use(express.json());
 
 // routes
 const userRouter = require("./routes/userRoutes");
 const formRouter = require("./routes/formRoutes");
 
+app.use(express.json());
 app.use("/users", userRouter);
 app.use("/forms", formRouter);
 
