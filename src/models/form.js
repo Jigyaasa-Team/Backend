@@ -10,6 +10,14 @@ const FormSchema = new Schema({
     formId: {
         type: String,
         required: true
+    },
+    responderUri: {
+        type: String,
+        required: true,
+    },
+    title: {
+        type: String,
+        required: true
     }
 }, { timestamps: true });
 
