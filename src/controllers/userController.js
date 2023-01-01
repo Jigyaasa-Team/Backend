@@ -78,7 +78,7 @@ const signin = async (req, res) => {
         const token = jwt.sign({ email: existingUser.email, id: existingUser._id }, SECRET_KEY);
         
         // send response
-        res.status(201).json({ user: existingUser, token });
+        res.status(200).json({ user: existingUser, token });
     } catch (err) {
         res.status(500).json({ message: `Something went wrong! ${err}` });
     }

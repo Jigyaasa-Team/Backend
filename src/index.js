@@ -1,6 +1,8 @@
 const express = require("express");
 const app = express();
-const port = 3000;
+require('dotenv');
+const cors = require("cors");
+const port = process.env.PORT || 5000;
 
 // mongo
 require('../config/db');
@@ -12,16 +14,13 @@ const formRouter = require("./routes/formRoutes");
 app.use(express.json());
 // app.use(express.urlencoded({extended: true}));
 
-app.use((req, res, next) => {
-    console.log("http method - " + req.method + " URL - " + req.url);
-    next();
-})
+app.use(cors());
 
 app.use("/users", userRouter);
 app.use("/forms", formRouter);
 
 app.get("/", (req, res) => {
-    res.send("Hello World");
+    res.send("FMS api");
 })
 
 app.listen(port, () => {
