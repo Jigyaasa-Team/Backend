@@ -2,7 +2,7 @@ const express = require("express");
 const app = express();
 require('dotenv');
 const cors = require("cors");
-const { forgotPassword } = require("./controllers/userController");
+const { forgotPassword, resetPasswordFromLink, verifyAndResetPassword } = require("./controllers/userController");
 const port = process.env.PORT || 5000;
 
 // mongo
@@ -15,12 +15,14 @@ const formRouter = require("./routes/formRoutes");
 app.use(express.json());
 // app.use(express.urlencoded({extended: true}));
 
-app.use(cors());
+app.use(cors({ origin: "http://fms-backend-production-ce11.up.railway.app" }));
 
 app.use("/users", userRouter);
 app.use("/forms", formRouter);
 
 app.post("/forgot-password", forgotPassword);
+app.get("/forgot-password/:id/:token", resetPasswordFromLink);
+app.post("/forgot-password/:id/:token", verifyAndResetPassword);
 
 app.get("/", (req, res) => {
     res.send("FMS api");
