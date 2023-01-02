@@ -15,7 +15,7 @@ const formRouter = require("./routes/formRoutes");
 app.use(express.json());
 // app.use(express.urlencoded({extended: true}));
 
-app.use(cors({ origin: "http://fms-backend-production-ce11.up.railway.app" }));
+app.use(cors({ origin: "*" }));
 
 app.use("/users", userRouter);
 app.use("/forms", formRouter);
