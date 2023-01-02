@@ -13,13 +13,7 @@ const UserSchema = new Schema({
     password: {
         type: String,
         required: true
-    },
-    passwordResetToken: {
-        type: String,
-        default: '',
-        required: false
     }
-
 }, { timestamps: true });
 
 const User = mongoose.model('User', UserSchema);
