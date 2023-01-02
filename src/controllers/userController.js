@@ -115,6 +115,11 @@ const resetPassword = async (req, res) => {
 
         const existingUser = await userModel.findOne({ email: req.email });
         const matchPassword = await bcrypt.compare(password, existingUser.password);
+        const matchNewPassword = await bcrypt.compare(newPassword, existingUser.password);
+        
+        if(matchNewPassword == matchPassword == 1) {
+            return res.status(400).json({ message: "New password cannot be same as current password!" });
+        }
 
         if(matchPassword) {
             const saltRounds = 10;
