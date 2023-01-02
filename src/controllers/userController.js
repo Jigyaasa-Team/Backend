@@ -109,6 +109,27 @@ const forgotPassword = async (req, res) => {
     }
 };
 
+const resetPassword = async (req, res) => {
+    try {
+        const { password, newPassword } = req.body;
+
+        const existingUser = await userModel.findOne({ email: req.email });
+        const matchPassword = await bcrypt.compare(password, existingUser.password);
+
+        if(matchPassword) {
+            const saltRounds = 10;
+            const hashedPassword = await bcrypt.hash(newPassword, saltRounds);
+    
+            const userPassword = await userModel.findByIdAndUpdate({ _id: req.userId }, { password: hashedPassword }, { new: true });
+            return res.status(200).json({ message: "Password changed successfully!", password: userPassword });
+        } else {
+            return res.status(400).json({ message: "Current password doesn't match!" });
+        }
+    } catch (err) {
+        res.status(400).json({ message: `Something went wrong! ${err}` });
+    }
+};
+
 const reportBugs = async (req, res) => {
     try {
         const { description } = req.body;
@@ -128,4 +149,4 @@ const reportBugs = async (req, res) => {
     }
 };
 
-module.exports = { signin, signup, forgotPassword, reportBugs };
+module.exports = { signin, signup, forgotPassword, reportBugs, resetPassword };
