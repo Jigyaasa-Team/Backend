@@ -5,6 +5,10 @@ const saveForm = async (req, res) => {
     console.log(req.userId);
     const { responderUri, title, formId } = req.body;
 
+    if(!req.header) {
+        return res.status(401).json({ message: "Unauthorized to save forms!"});
+    }
+
     const newForm = new formModel({
         userId: req.userId,
         formId,
