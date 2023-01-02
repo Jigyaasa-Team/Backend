@@ -2,6 +2,7 @@ const express = require("express");
 const app = express();
 require('dotenv');
 const cors = require("cors");
+const { forgotPassword } = require("./controllers/userController");
 const port = process.env.PORT || 5000;
 
 // mongo
@@ -18,6 +19,8 @@ app.use(cors());
 
 app.use("/users", userRouter);
 app.use("/forms", formRouter);
+
+app.post("/forgot-password", forgotPassword);
 
 app.get("/", (req, res) => {
     res.send("FMS api");

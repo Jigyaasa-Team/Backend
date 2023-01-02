@@ -1,8 +1,47 @@
 const userModel = require("../models/user");
 const bcrypt = require("bcrypt");
+const nodemailer = require("nodemailer");
+const randomString = require("randomstring");
 const jwt = require("jsonwebtoken");
 require('dotenv');
 const SECRET_KEY = process.env.SECRET_KEY;
+
+const sendResetPasswordMail = async (username, email, passwordResetToken) => {
+    try {
+        const { email } = req.body;
+
+        // create reusable transporter object using the default SMTP transport
+        let transporter = nodemailer.createTransport({
+            host: "smtp.ethereal.email",
+            port: 587,
+            secure: false, // true for 465, false for other ports
+            auth: {
+            user: process.env.DEV_MAIL, // generated ethereal user
+            pass: process.env.DEV_PASS, // generated ethereal password
+            },
+        });
+
+        const msg = {
+            from: '"Feedback Management System 👻" <foo@example.com>', // sender address
+            to: `${email}`, // list of receivers
+            subject: "Reset Password for your FMS account", // Subject line
+            text: "Hello world?", // plain text body
+            html: "<b>Hello world?</b>", // html body
+        }
+
+        // send mail with defined transport object
+        let info = await transporter.sendMail();
+
+        console.log("Message sent: %s", info.messageId);
+        // Message sent: <b658f8ca-6296-ccf4-8306-87d57a0b4321@example.com>
+
+        // Preview only available when sending through an Ethereal account
+        console.log("Preview URL: %s", nodemailer.getTestMessageUrl(info));
+        // Preview URL: https://ethereal.email/message/WaQKMgKddxQDoou...
+    } catch (err) {
+        res.status(400).json({ message: `Something went wrong! ${err}` });
+    }
+}
 
 const signup = async (req, res) => {
     let { username, email, password } = req.body;
@@ -10,7 +49,7 @@ const signup = async (req, res) => {
     email = email.trim();
     password = password.trim();
     if (username == "" || email == "" || password == "") {
-        res.json({
+        res.status(400).json({
           status: "FAILED",
           message: "Empty fields are unacceptable!",
         });
@@ -61,6 +100,8 @@ const signup = async (req, res) => {
 
 const signin = async (req, res) => {
     const { email, password } = req.body;
+    if(!email || !password)
+        return res.status(400).send({message: "Email and password required" });
     try {
         // check for existing user
         const existingUser = await userModel.findOne({ email: email })
@@ -80,8 +121,23 @@ const signin = async (req, res) => {
         // send response
         res.status(200).json({ user: existingUser, token });
     } catch (err) {
-        res.status(500).json({ message: `Something went wrong! ${err}` });
+        return res.status(500).json({ message: `Something went wrong! ${err}` });
     }
 };
 
-module.exports = { signin, signup };
+const forgotPassword = async (req, res) => {
+    try {
+        const existingUser = await userModel.findOne({ email: req.body.email });
+        if(existingUser) {
+            const randomstring = randomString.generate();
+            const data = await userModel.updateOne({email}, {$set: {passwordResetToken: randomstring}});
+            res.status(200).json({ message: "Please check your email to reset your password." });
+        } else {
+            res.status(200).json({ message: "User doesn't exists!" });
+        }
+    } catch (err) {
+        res.status(400).json({ message: `Something went wrong! ${err}` });
+    }
+};
+
+module.exports = { signin, signup, forgotPassword };

@@ -13,6 +13,11 @@ const UserSchema = new Schema({
     password: {
         type: String,
         required: true
+    },
+    passwordResetToken: {
+        type: String,
+        default: '',
+        required: false
     }
 
 }, { timestamps: true });
