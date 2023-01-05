@@ -6,6 +6,7 @@ const { google } = require("googleapis");
 const jwt = require("jsonwebtoken");
 require('dotenv').config();
 const SECRET_KEY = process.env.SECRET_KEY;
+const randomstring = require("randomstring");
 
 const sendResetPasswordMail = async (username, email, passwordResetToken) => {
     try {
@@ -98,23 +99,23 @@ const forgotPassword = async (req, res) => {
     try {
         const existingUser = await userModel.findOne({ email: req.body.email });
         if(existingUser) {
-            const CLIENT_ID = '1051862290422-ps3d8sptmg67vqgu5fli5852mb0r78p8.apps.googleusercontent.com';
-            const CLIENT_SECRET = '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';
-            const REDIRECT_URI = 'https://developers.google.com/oauthplayground';
-            const REFRESH_TOKEN = '1//04qxKA1is7WO9CgYIARAAGAQSNwF-L9Ir2O0Deb1s-I1ZjJYA79r_Yhn-w4FXQrUQTkMwAfIJz5waioMx2jKOcWddnRRg_FoD3pA';
-            
-            const oAuth2Client = new google.auth.OAuth2(CLIENT_ID, CLIENT_SECRET, REDIRECT_URI);
-            oAuth2Client.setCredentials({ refresh_token: REFRESH_TOKEN });
+            const oAuth2Client = new google.auth.OAuth2(process.env.CLIENT_ID, process.env.CLIENT_SECRET, process.env.REDIRECT_URI);
+            oAuth2Client.setCredentials({ refresh_token: process.env.REFRESH_TOKEN });
 
-            const secret = SECRET_KEY + existingUser.password;
-            const payload = {
-                email: existingUser.email,
-                id: existingUser.id
-            }
-            const token = jwt.sign(payload, secret, { expiresIn: '15m' });
+            // const secret = SECRET_KEY + existingUser.password;
+            // const payload = {
+            //     email: existingUser.email,
+            //     id: existingUser.id
+            // }
+            // const token = jwt.sign(payload, secret, { expiresIn: '15m' });
             // const link = `http://fms-backend-production-ce11.up.railway.app/forgot-password/${existingUser.id}/${token}`;
-            const link = `http://localhost:${process.env.PORT}/forgot-password/${existingUser.id}/${token}`;
-            console.log(link);
+            // const link = `http://localhost:${process.env.PORT}/forgot-password/${existingUser.id}/${token}`;
+            // console.log(link);
+
+            const temperoryPassword = randomstring.generate(7);
+            const saltRounds = 10;
+            const hashedPassword = await bcrypt.hash(temperoryPassword, saltRounds);
+            const userPassword = await userModel.findByIdAndUpdate({ _id: existingUser.id }, { password: hashedPassword }, { new: true });
 
             const sendMail = async () => {
                 try {
@@ -125,9 +126,9 @@ const forgotPassword = async (req, res) => {
                         auth: {
                             type: 'OAuth2',
                             user: 'tanishcqmehta.dev@gmail.com',
-                            clientId: CLIENT_ID,
-                            clientSecret: CLIENT_SECRET,
-                            refreshToken: REFRESH_TOKEN,
+                            clientId: process.env.CLIENT_ID,
+                            clientSecret: process.env.CLIENT_SECRET,
+                            refreshToken: process.env.REFRESH_TOKEN,
                             accessToken
                         }
                     })
@@ -135,13 +136,13 @@ const forgotPassword = async (req, res) => {
                     const mailOptions = {
                         from: 'FMS Development Team <tanishcqmehta.dev@gmail.com>',
                         to: existingUser.email,
-                        subject: "Reset Password",
-                        text: `Click on the following link to reset your password : ${link}`,
-                        html: `<h2>Click on the following link to reset your password : ${link}</h2>`
+                        subject: `Reset Password for FMS account : ${existingUser.email} `,
+                        text: `Your new password is provided below.. Please copy it somewhere to be able to login. You can also reset your password from the app once logged in.\n New Password: ${temperoryPassword}`,
+                        html: `<h3 style="color:#330080;">Your new password is provided below.. Please copy it somewhere to be able to login. You can also reset your password from the app once logged in.</h3> <h4><span>New Password: </span> <span style="color:#ff0066;">${temperoryPassword}</span></h4>`
                     }
 
                     const result = await transport.sendMail(mailOptions);
-                    return res.status(200).json({ message: "Please check your email to reset your password.", result });
+                    return res.status(200).json({ message: "Please check your email for new password.", result });
                 } catch(err) {
                     return res.status(400).json({ message: `Something went wrong! ${err}` });
                 }

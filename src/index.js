@@ -14,15 +14,15 @@ const formRouter = require("./routes/formRoutes");
 
 app.use(express.json());
 // app.use(express.urlencoded({extended: true}));
+app.use(cors());
 
-app.use(cors({ origin: "*" }));
 
 app.use("/users", userRouter);
 app.use("/forms", formRouter);
 
 app.post("/forgot-password", forgotPassword);
-app.get("/forgot-password/:id/:token", resetPasswordFromLink);
-app.post("/forgot-password/:id/:token", verifyAndResetPassword);
+// app.get("/forgot-password/:id/:token", resetPasswordFromLink);
+// app.post("/forgot-password/:id/:token", verifyAndResetPassword);
 
 app.get("/", (req, res) => {
     res.send("FMS api");
