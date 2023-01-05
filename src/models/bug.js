@@ -17,6 +17,6 @@ const BugSchema = new Schema({
     }
 }, { timestamps: true });
 
-const Bug = mongoose.model('Bug', BugSchema);
+const Bug = mongoose.model('bugs', BugSchema);
 
 module.exports = Bug; 
