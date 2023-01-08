@@ -5,7 +5,7 @@ const cors = require("cors");
 const { forgotPassword, resetPasswordFromLink, verifyAndResetPassword } = require("./controllers/userController");
 const port = process.env.PORT || 5000;
 app.use(cors());
-
+app.options("*", cors());
 
 // mongo
 require('../config/db');
