@@ -4,6 +4,8 @@ require('dotenv');
 const cors = require("cors");
 const { forgotPassword, resetPasswordFromLink, verifyAndResetPassword } = require("./controllers/userController");
 const port = process.env.PORT || 5000;
+app.use(cors());
+
 
 // mongo
 require('../config/db');
@@ -14,7 +16,6 @@ const formRouter = require("./routes/formRoutes");
 
 app.use(express.json());
 // app.use(express.urlencoded({extended: true}));
-app.use(cors());
 
 
 app.use("/users", userRouter);

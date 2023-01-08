@@ -37,9 +37,9 @@ const deleteForm = async (req, res) => {
     const id = req.params.id;
     try {
         const form = await formModel.findByIdAndRemove(id);
-        res.status(202).json(form);
+        return res.status(202).json(form);
     } catch(err) {
-        res.status(500).json({ message: `Something went wrong! ${err}`});
+        return res.status(500).json({ message: `Something went wrong! ${err}`});
     }
 }
 
