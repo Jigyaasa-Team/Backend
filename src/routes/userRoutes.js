@@ -5,9 +5,9 @@ const auth = require("../middlewares/auth");
 const cors = require("cors");
 
 
-userRouter.post("/signup", cors(), signup);
-userRouter.post("/signin", cors(), signin);
-userRouter.post("/reportBugs", cors(), auth, reportBugs);
-userRouter.patch("/resetPassword",cors(), auth, resetPassword);
+userRouter.post("/signup", signup);
+userRouter.post("/signin", signin);
+userRouter.post("/reportBugs", auth, reportBugs);
+userRouter.patch("/resetPassword", auth, resetPassword);
 
 module.exports = userRouter;

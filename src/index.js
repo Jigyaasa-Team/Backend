@@ -4,9 +4,6 @@ require('dotenv');
 const cors = require("cors");
 const { forgotPassword, resetPasswordFromLink, verifyAndResetPassword } = require("./controllers/userController");
 const port = process.env.PORT || 5000;
-app.use(cors({
-    origin: "http://localhost:3000"
-}));
 app.options("*", cors());
 
 // mongo
