@@ -4,7 +4,8 @@ require('dotenv');
 const cors = require("cors");
 const { forgotPassword, resetPasswordFromLink, verifyAndResetPassword } = require("./controllers/userController");
 const port = process.env.PORT || 5000;
-app.options("*", cors());
+app.options("*", cors({ origin: 'http://localhost:3000', optionsSuccessStatus: 200 }));
+app.use(cors({ origin: "http://localhost:3000", optionsSuccessStatus: 200 }));
 
 // mongo
 require('../config/db');
