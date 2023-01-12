@@ -1,4 +1,4 @@
-const formModel = require("../models/form");
+const { formModel } = require("../models");
 // const jwt = require("jsonwebtoken");
 
 const saveForm = async (req, res) => {
