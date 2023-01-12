@@ -1,5 +1,8 @@
-const userModel = require("../models/user");
-const bugModel = require("../models/bug");
+const { 
+    userModel,
+    bugModel,
+    feedbackModel
+} = require("../models");
 const bcrypt = require("bcrypt");
 const nodemailer = require("nodemailer");
 const { google } = require("googleapis");
@@ -8,13 +11,13 @@ require('dotenv').config();
 const SECRET_KEY = process.env.SECRET_KEY;
 const randomstring = require("randomstring");
 
-const sendResetPasswordMail = async (username, email, passwordResetToken) => {
-    try {
-        const { email } = req.body;
-    } catch (err) {
-        res.status(400).json({ message: `Something went wrong! ${err}` });
-    }
-}
+// const sendResetPasswordMail = async (username, email, passwordResetToken) => {
+//     try {
+//         const { email } = req.body;
+//     } catch (err) {
+//         res.status(400).json({ message: `Something went wrong! ${err}` });
+//     }
+// }
 
 const signup = async (req, res) => {
     let { username, email, password } = req.body;
@@ -238,4 +241,19 @@ const reportBugs = async (req, res) => {
     }
 };
 
-module.exports = { signin, signup, forgotPassword, reportBugs, resetPassword, verifyAndResetPassword, resetPasswordFromLink };
+const createFeedback = async (req, res) => {
+    try {
+        const { email, description } = req.body;
+
+        const result = await feedbackModel.create({
+            email,
+            description
+        })
+        res.status(200).json({ feedback: result });
+
+    } catch (err) {
+        res.status(400).json({ message: `Something went wrong! ${err}` });
+    }
+};
+
+module.exports = { signin, signup, forgotPassword, reportBugs, resetPassword, verifyAndResetPassword, resetPasswordFromLink, createFeedback };

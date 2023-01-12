@@ -1,7 +1,11 @@
 const express = require("express");
-const { saveForm, deleteForm, getAllForms } = require("../controllers/formController");
+const { 
+    saveForm, 
+    deleteForm, 
+    getAllForms 
+} = require("../controllers");
 const formRouter = express.Router();
-const auth = require("../middlewares/auth");
+const { auth } = require("../middlewares");
 
 formRouter.post("/", auth, saveForm);
 formRouter.get("/", auth, getAllForms);

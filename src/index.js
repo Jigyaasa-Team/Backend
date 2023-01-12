@@ -1,18 +1,22 @@
 const express = require("express");
 const app = express();
 require('dotenv');
-const cors = require("cors");
-const { forgotPassword, resetPasswordFromLink, verifyAndResetPassword } = require("./controllers/userController");
+const { forgotPassword } = require("./controllers/userController");
 const port = process.env.PORT || 5000;
-app.options("*", cors({ origin: 'http://localhost:3000', optionsSuccessStatus: 200 }));
-app.use(cors({ origin: "http://localhost:3000", optionsSuccessStatus: 200 }));
+
+// cors management
+const cors = require("cors");
+app.options("*", cors({ origin: ["http://localhost:3000", "*"], optionsSuccessStatus: 200 }));
+app.use(cors({ origin: ["http://localhost:3000", "*"], optionsSuccessStatus: 200 }));
 
 // mongo
 require('../config/db');
 
 // routes
-const userRouter = require("./routes/userRoutes");
-const formRouter = require("./routes/formRoutes");
+const {
+    userRouter,
+    formRouter
+} = require("./routes");
 
 app.use(express.json());
 // app.use(express.urlencoded({extended: true}));
