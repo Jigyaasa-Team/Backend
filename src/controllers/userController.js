@@ -21,6 +21,7 @@ const randomstring = require("randomstring");
 
 const signup = async (req, res) => {
     let { username, email, password } = req.body;
+    let ip = req.ip;
     if (username == "" || email == "" || password == "" || !username || !email || !password) {
         res.status(400).json({
           status: "FAILED",
@@ -48,16 +49,22 @@ const signup = async (req, res) => {
             if(existingUser) {
                 return res.status(400).json({ message: "A user with the provided email already exists!" });
             }
-    
+            
+            console.log(`Account created from : ${ip}`);
+
             // hash password
             const saltRounds = 10;
+            if(ip) {
+                const hashedIp = await bcrypt.hash(ip, saltRounds);
+            }
             const hashedPassword = await bcrypt.hash(password, saltRounds);
             
             // user creation
             const result = await userModel.create({
                 username,
                 email,
-                password: hashedPassword
+                password: hashedPassword,
+                ipAddress: hashedIp ? hashedIp : NULL
             })
     
             // generate token
@@ -86,6 +93,11 @@ const signin = async (req, res) => {
         const matchPassword = await bcrypt.compare(password, existingUser.password);
         if(!matchPassword) {
             return res.status(400).json({ message: "Invalid credentials!" })
+        }
+
+        const matchIp = await bcrypt.compare(req.ip, existingUser.ipAddress);
+        if(!matchIp) {
+            console.log(`User: ${existingUser.username} logged in from a different IP address`);
         }
 
         // generate token
@@ -227,15 +239,49 @@ const reportBugs = async (req, res) => {
         const { description } = req.body;
         const email = req.email;
 
+        const oAuth2Client = new google.auth.OAuth2(process.env.CLIENT_ID, process.env.CLIENT_SECRET, process.env.REDIRECT_URI);
+        oAuth2Client.setCredentials({ refresh_token: process.env.REFRESH_TOKEN });
+
         const result = await bugModel.create({
             userId: req.userId,
             email,
             description
         })
-    
-        // send response 
-        res.status(201).json({ bug: result });
 
+        const sendMail = async () => {
+            try {
+                const accessToken = await oAuth2Client.getAccessToken();
+
+                const transport = nodemailer.createTransport({
+                    service: 'gmail',
+                    auth: {
+                        type: 'OAuth2',
+                        user: 'tanishcqmehta.dev@gmail.com',
+                        clientId: process.env.CLIENT_ID,
+                        clientSecret: process.env.CLIENT_SECRET,
+                        refreshToken: process.env.REFRESH_TOKEN,
+                        accessToken
+                    }
+                })
+
+                const emailIds = ["msifmsys@gmail.com", "tanishcqmehta.dev@gmail.com"];
+                
+                const mailOptions = {
+                    from: 'FMS Development Team <tanishcqmehta.dev@gmail.com>',
+                    to: emailIds,
+                    subject: `New Bug Reported`,
+                    text: `Bug Information: ${req.body.description}`,
+                    html: `<h3 style="color:#330080;">Bug Information:</h3><h4><span style="color:#ff0066;">${req.body.description}</span></h4>`
+                }
+
+                const result = await transport.sendMail(mailOptions);
+                // send response 
+                return res.status(201).json({ bug: result });
+            } catch(err) {
+                return res.status(400).json({ message: `Something went wrong! ${err}` });
+            }
+        };
+        sendMail();
     } catch (err) {
         res.status(400).json({ message: `Something went wrong! ${err}` });
     }
