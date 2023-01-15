@@ -49,14 +49,13 @@ const signup = async (req, res) => {
             if(existingUser) {
                 return res.status(400).json({ message: "A user with the provided email already exists!" });
             }
-            
+            let hashedIp;
+
             console.log(`Account created from : ${ip}`);
 
             // hash password
             const saltRounds = 10;
-            if(ip) {
-                const hashedIp = await bcrypt.hash(ip, saltRounds);
-            }
+            hashedIp = await bcrypt.hash(ip, saltRounds);
             const hashedPassword = await bcrypt.hash(password, saltRounds);
             
             // user creation
