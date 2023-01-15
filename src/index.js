@@ -4,10 +4,21 @@ require('dotenv');
 const { forgotPassword } = require("./controllers/userController");
 const port = process.env.PORT || 5000;
 
+const { apiLimiter } = require('./middlewares')
+
+// Server hardware information
+const si = require('systeminformation');
+si.cpu().then(data => {
+    console.log("--Server Information--");
+    console.log('Brand: ' + data.brand);
+    console.log('Physical cores: ' + data.physicalCores);
+    console.log('Speed: ' + data.speed);
+}).catch(error => console.error(error));
+
 // cors management
 const cors = require("cors");
-app.options("*", cors({ origin: ["http://localhost:3000", "*"], optionsSuccessStatus: 200 }));
-app.use(cors({ origin: ["http://localhost:3000", "*"], optionsSuccessStatus: 200 }));
+app.options("*", cors({ origin: ["http://localhost:3000", "https://acquired-winter-369109.firebaseapp.com"], optionsSuccessStatus: 200 }));
+app.use(cors({ origin: ["http://localhost:3000", "https://acquired-winter-369109.firebaseapp.com"], optionsSuccessStatus: 200 }));
 
 // mongo
 require('../config/db');
@@ -21,6 +32,8 @@ const {
 app.use(express.json());
 // app.use(express.urlencoded({extended: true}));
 
+app.set('trust proxy', true);
+app.use(apiLimiter);
 
 app.use("/users", userRouter);
 app.use("/forms", formRouter);
