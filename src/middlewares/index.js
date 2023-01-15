@@ -1,8 +1,10 @@
 const auth = require('./auth');
-const { loginRateLimiter, feedbackRequestsLimiter } = require('./limiter');
+const { loginRateLimiter, feedbackRequestsLimiter, apiLimiter, bugRequestLimiter } = require('./limiter');
 
 module.exports = {
     auth,
     loginRateLimiter,
-    feedbackRequestsLimiter
+    feedbackRequestsLimiter,
+    bugRequestLimiter,
+    apiLimiter
 }
