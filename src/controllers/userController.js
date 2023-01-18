@@ -301,4 +301,13 @@ const createFeedback = async (req, res) => {
     }
 };
 
-module.exports = { signin, signup, forgotPassword, reportBugs, resetPassword, verifyAndResetPassword, resetPasswordFromLink, createFeedback };
+module.exports = { 
+    signin, 
+    signup, 
+    forgotPassword, 
+    reportBugs, 
+    resetPassword, 
+    verifyAndResetPassword, 
+    resetPasswordFromLink, 
+    createFeedback 
+};

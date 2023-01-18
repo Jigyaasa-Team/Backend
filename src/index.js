@@ -17,8 +17,20 @@ si.cpu().then(data => {
 
 // cors management
 const cors = require("cors");
-app.options("*", cors({ origin: ["http://localhost:3000", "https://acquired-winter-369109.firebaseapp.com"], optionsSuccessStatus: 200 }));
-app.use(cors({ origin: ["http://localhost:3000", "https://acquired-winter-369109.firebaseapp.com"], optionsSuccessStatus: 200 }));
+app.options("*", cors({ 
+    origin: [
+        "http://localhost:3000", 
+        "https://acquired-winter-369109.firebaseapp.com"
+    ], 
+    optionsSuccessStatus: 200 
+}));
+app.use(cors({ 
+    origin: [
+        "http://localhost:3000", 
+        "https://acquired-winter-369109.firebaseapp.com"
+    ], 
+    optionsSuccessStatus: 200 
+}));
 
 // mongo
 require('../config/db');
