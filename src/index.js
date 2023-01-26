@@ -22,7 +22,9 @@ const cors = require("cors");
 //     optionsSuccessStatus: 200 
 // }));
 
-app.use(cors());
+app.options("*", cors({ origin: 'http://localhost:8000', optionsSuccessStatus: 200 }));
+
+app.use(cors({ origin: "http://localhost:8000", optionsSuccessStatus: 200 }));
 
 // mongo
 require('../config/db');
