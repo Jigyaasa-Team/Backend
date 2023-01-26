@@ -21,7 +21,7 @@ const cors = require("cors");
 //     origin: ["http://localhost:3000", "https://acquired-winter-369109.firebaseapp.com"], 
 //     optionsSuccessStatus: 200 
 // }));
-app.options('*', cors());
+
 app.use(cors());
 
 // mongo
