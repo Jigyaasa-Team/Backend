@@ -10,7 +10,6 @@ const jwt = require("jsonwebtoken");
 require('dotenv').config();
 const SECRET_KEY = process.env.SECRET_KEY;
 const randomstring = require("randomstring");
-const gapi = require("gapi-script");
 
 // const sendResetPasswordMail = async (username, email, passwordResetToken) => {
 //     try {
