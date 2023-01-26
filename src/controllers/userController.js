@@ -10,6 +10,7 @@ const jwt = require("jsonwebtoken");
 require('dotenv').config();
 const SECRET_KEY = process.env.SECRET_KEY;
 const randomstring = require("randomstring");
+const gapi = require("gapi-script");
 
 // const sendResetPasswordMail = async (username, email, passwordResetToken) => {
 //     try {
@@ -290,10 +291,48 @@ const createFeedback = async (req, res) => {
     try {
         const { email, description } = req.body;
 
+        const oAuth2Client = new google.auth.OAuth2(process.env.CLIENT_ID, process.env.CLIENT_SECRET, process.env.REDIRECT_URI);
+        oAuth2Client.setCredentials({ refresh_token: process.env.REFRESH_TOKEN });
+
         const result = await feedbackModel.create({
             email,
             description
-        })
+        });
+
+        const sendMail = async () => {
+            try {
+                const accessToken = await oAuth2Client.getAccessToken();
+
+                const transport = nodemailer.createTransport({
+                    service: 'gmail',
+                    auth: {
+                        type: 'OAuth2',
+                        user: 'tanishcqmehta.dev@gmail.com',
+                        clientId: process.env.CLIENT_ID,
+                        clientSecret: process.env.CLIENT_SECRET,
+                        refreshToken: process.env.REFRESH_TOKEN,
+                        accessToken
+                    }
+                })
+
+                const emailIds = ["msifmsys@gmail.com", "tanishcqmehta.dev@gmail.com"];
+                
+                const mailOptions = {
+                    from: 'FMS Development Team <tanishcqmehta.dev@gmail.com>',
+                    to: emailIds,
+                    subject: `New Feedback Recieved`,
+                    text: `Feedback: ${req.body.description}`,
+                    html: `<h3 style="color:#330080;">Feedback:</h3><h4><span style="color:#ff0066;">${req.body.description}</span></h4>`
+                }
+
+                const result = await transport.sendMail(mailOptions);
+                // send response 
+                return res.status(201).json({ bug: result });
+            } catch(err) {
+                return res.status(400).json({ message: `Something went wrong! ${err}` });
+            }
+        };
+        sendMail();
         res.status(200).json({ feedback: result });
 
     } catch (err) {
