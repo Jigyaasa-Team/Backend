@@ -21,9 +21,8 @@ const cors = require("cors");
 //     origin: ["http://localhost:3000", "https://acquired-winter-369109.firebaseapp.com"], 
 //     optionsSuccessStatus: 200 
 // }));
-app.use(cors({ 
-    origin: '*', 
-}));
+app.options('*', cors());
+app.use(cors());
 
 // mongo
 require('../config/db');
@@ -37,7 +36,7 @@ const {
 app.use(express.json());
 // app.use(express.urlencoded({extended: true}));
 
-// app.set('trust proxy', true);
+app.set('trust proxy', true);
 app.use(apiLimiter);
 
 app.use("/users", userRouter);
