@@ -15,7 +15,6 @@ si.cpu().then(data => {
     console.log('Speed: ' + data.speed);
 }).catch(error => console.error(error));
 
-// cors management
 const cors = require("cors");
 // app.options("*", cors({ 
 //     origin: ["http://localhost:3000", "https://acquired-winter-369109.firebaseapp.com"], 
