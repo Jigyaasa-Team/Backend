@@ -26,6 +26,13 @@ After installing required packages using the 'npm i' command, In the project dir
 Runs the app in the development mode.\
 Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
 
+###NOTE 
+The deployed version of backend is not very reliable. So in case of a failure, you may run the local backend setup first for the testing purpose.
+And also since our idea depends upon validating a college representative based on several factors and parameters before they are authorized for moderating feedback support, it can't be done in the time contrained. So instead we are providing with the credentials of a dummy authourized representative for the sake of research and testing.
+Credentials are as follows:- 
+`email`: fcam@msijanakpuri.com
+`password`: 123456
+
 ## How To Use the App
 
 A short tutorial video by team Jigyaas has been uploaded on the RAJASTHAN IT
